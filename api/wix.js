@@ -33,13 +33,15 @@ async function createContact({ name, email, phone }) {
   const res = await fetch(`${WIX_BASE}/contacts/v4/contacts`, {
     method: "POST",
     headers: wixHeaders(),
-    body: JSON.stringify({ contact: { info }, allowDuplicates: true })
+    body: JSON.stringify({ info }) // v4: info در ریشه بدنه — بدون contact wrapper و allowDuplicates
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
-    // دسترسی contacts.write نداریم → خطا نمی‌دهیم؛ نوتیفیکیشن WhatsApp مسیر اصلی است
-    console.error("Wix contact skipped:", res.status, JSON.stringify(json).slice(0, 120));
-    return null;
+    if (JSON.stringify(json).includes("DUPLICATE_CONTACT_EXISTS")) {
+      return { id: "existing", duplicate: true }; // کانتکت از قبل هست — مشتری همان است
+    }
+    console.error("Wix contact failed:", res.status, JSON.stringify(json).slice(0, 160));
+    throw new Error(`contacts ${res.status}`);
   }
   return json.contact;
 }
