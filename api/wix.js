@@ -110,8 +110,7 @@ module.exports = async (req, res) => {
         if (email) lines.push(` Email: ${email}`);
         if (phone) lines.push(` Tel: ${phone}`);
         if (message) lines.push(` Msg: ${String(message).slice(0, 300)}`);
-        const text = encodeURIComponent(lines.join("
-"));
+        const text = encodeURIComponent(lines.join("\n"));
         const waRes = await fetch(`https://api.callmebot.com/whatsapp.php?phone=${process.env.OWNER_PHONE}&text=${text}&apikey=${process.env.CALLMEBOT_KEY}`, { method: "GET" });
         whatsappSent = waRes.ok;
         if (!waRes.ok) console.error("WhatsApp notify failed:", waRes.status);
