@@ -165,12 +165,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("submit", e => {
   const f = e.target;
-  if (f.classList.contains("nl-form") || f.classList.contains("cform")) {
-    e.preventDefault();
-    const ok = f.parentElement.querySelector(".nl-ok") || f.querySelector(".k-ok");
-    if (ok) ok.style.display = "block";
-    f.reset();
-  }
+  if (!(f.classList.contains("nl-form") || f.classList.contains("cform"))) return;
+  e.preventDefault();
+  const ok = f.parentElement.querySelector(".nl-ok") || f.querySelector(".k-ok");
+  const btn = f.querySelector("button[type=submit]");
+  const type = f.classList.contains("cform") ? "contact" : "newsletter";
+  const fd = new FormData(f);
+  const payload = { type, name: [fd.get("fn"), fd.get("ln")].filter(Boolean).join(" ") || fd.get("name") || "", email: fd.get("em") || fd.get("email") || "", phone: fd.get("phone") || "", message: fd.get("msg") || "" };
+  if (btn) { btn.disabled = true; btn.dataset.old = btn.textContent; }
+  fetch("/api/wix", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        if (ok) ok.style.display = "block";
+        f.reset();
+      } else {
+        if (ok) { ok.style.display = "block"; ok.dataset.err = "1"; ok.textContent = d.error || "Error — please try again"; }
+      }
+    })
+    .catch(() => { if (ok) { ok.style.display = "block"; ok.textContent = "Network error — please WhatsApp us"; } })
+    .finally(() => { if (btn) { btn.disabled = false; btn.textContent = btn.dataset.old || btn.textContent; } });
 });
 
 window.I18N = I18N;

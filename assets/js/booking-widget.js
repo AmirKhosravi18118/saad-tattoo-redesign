@@ -97,7 +97,27 @@
     q(".bk-form").addEventListener("submit", e => {
       e.preventDefault();
       if (!pickedDate || !pickedTime) { q(".bk-pick").style.display = "block"; return; }
-      show("ok");
+      const btn = q('.bk-form button[type="submit"]');
+      const fd = new FormData(e.target);
+      const payload = {
+        type: "booking",
+        service: slug,
+        date: pickedDate.toISOString().slice(0, 10),
+        time: pickedTime,
+        name: fd.get("bk_name") || fd.get(0) || fd.entries().next().value[1] || "",
+        email: q('.bk-form input[type="email"]').value,
+        phone: [...e.target.querySelectorAll("input[type='tel']")].map(i => i.value)[0] || ""
+      };
+      // نام/ایمیل/تلفن از ورودی‌های ترتیبی (ویجت input بدون name دارد)
+      const ins = [...e.target.querySelectorAll("input")];
+      payload.name = ins[0] ? ins[0].value : "";
+      payload.phone = ins[1] ? ins[1].value : "";
+      payload.email = ins[2] ? ins[2].value : "";
+      if (btn) { btn.disabled = true; btn.dataset.old = btn.textContent; }
+      fetch("/api/wix", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+        .then(r => r.json())
+        .then(d => { if (d.ok || d.booking) show("ok"); else { btn.disabled = false; btn.textContent = d.error || "Error — try again"; } })
+        .catch(() => { btn.disabled = false; btn.textContent = "Network error — try again"; });
     });
   }
 
