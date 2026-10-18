@@ -28,8 +28,8 @@ async function createContact({ name, email, phone }) {
   const info = {
     name: { first, last: rest.join(" ") || "-" }
   };
-  if (email) info.emails = { items: [{ email, tag: "Main" }] };
-  if (phone) info.phones = { items: [{ phone, tag: "Main" }] };
+  if (email) info.emails = { items: [{ email, tag: "MAIN" }] };
+  if (phone) info.phones = { items: [{ phone, tag: "MAIN" }] };
   const res = await fetch(`${WIX_BASE}/contacts/v4/contacts`, {
     method: "POST",
     headers: wixHeaders(),
