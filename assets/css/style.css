@@ -315,3 +315,7 @@ footer .legal-links{margin-left:auto}
 .bk-bar i{display:block;height:100%;width:33%;background:var(--gold);transition:width .3s}
 .bk-service{font-family:var(--font-head);color:var(--gold);font-size:14px;letter-spacing:.1em;text-transform:uppercase}
 [dir="rtl"] .bk-service{font-family:var(--font-fa);letter-spacing:0;text-transform:none}
+
+/* کارت Coming Soon — غیرفعال، کم‌رنگ‌تر */
+.card.is-soon{opacity:.85;cursor:default}
+.card.is-soon:hover{transform:none;border-color:var(--line-soft);box-shadow:none}
