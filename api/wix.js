@@ -120,7 +120,12 @@ module.exports = async (req, res) => {
     } catch (e) { console.error("WhatsApp notify error:", e.message); }
 
     // ۱) کانتکت واقعی در CRM ویکس
-    const contact = await createContact({ name, email, phone });
+    let crmName = name;
+    if (type === "booking" && (service || date)) {
+      // جزئیات رزرو خود-توصیفی در CRM: «نام · سرویس · تاریخ ساعت»
+      crmName = `${(name || "Guest").trim()} · ${SERVICE_NAMES[service] || service || ""} · ${date || ""} ${time || ""}`.trim();
+    }
+    const contact = await createContact({ name: crmName, email, phone });
 
     // ۲) برای رزرو: تلاش برای Booking واقعی (با slot در صورت وجود)
     let bookingInfo = null;
