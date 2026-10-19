@@ -319,3 +319,10 @@ footer .legal-links{margin-left:auto}
 /* کارت Coming Soon — غیرفعال، کم‌رنگ‌تر */
 .card.is-soon{opacity:.85;cursor:default}
 .card.is-soon:hover{transform:none;border-color:var(--line-soft);box-shadow:none}
+
+/* فارسی: اعداد آمار و هر عدد head-فونت با وزیرمتن (Archivo ارقام فارسی ندارد) */
+[dir="rtl"] .hero-stats b,
+[dir="rtl"] .strip b,
+[dir="rtl"] .hero-stats .st b,
+[dir="rtl"] b[data-i18n^="stat"]{font-family:var(--font-fa) !important;font-weight:900}
+[dir="rtl"] .hero-stats b,[dir="rtl"] .strip b{font-feature-settings:"ss01"}
