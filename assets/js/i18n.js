@@ -144,11 +144,17 @@ function setLang(l){
   });
   document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("on", b.dataset.lang === l));
 }
+// زبان: بلافاصله هنگام اجرای اسکریپت + بعد از DOM + بعد از بازگشت bfcache
+// تا هیچ صفحه‌ای با زبان پیش‌فرض آلمانی نماند مگر کاربر خودش DE انتخاب کرده باشد
+function applySavedLang() {
+  try { setLang(localStorage.getItem("saad_lang") || "de"); } catch (e) {}
+}
+applySavedLang();
 document.addEventListener("DOMContentLoaded", () => {
-  const saved = localStorage.getItem("saad_lang") || "de";
-  setLang(saved);
+  applySavedLang();
   document.querySelectorAll(".lang-btn").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
 });
+window.addEventListener("pageshow", e => { if (e.persisted) applySavedLang(); });
 // --- Mobile menu ---
 document.addEventListener("DOMContentLoaded", () => {
   const burger = document.getElementById("burger");
